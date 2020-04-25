@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdlib.h>
 
 struct FortuneIterations {
     double fortune;
@@ -11,13 +12,11 @@ struct FortuneIterations {
 
 const double capitalFractionInvested = 0.5;
 
-struct FortuneIterations run(unsigned int seed, double winBelow) {
+struct FortuneIterations run(double winBelow) {
     double fortune = 1.0;
     long iterations = 0;
     while(1) {
-        double newSeed = (seed * 9301 + 49297) % 233280;
-        double r = seed / 233280.0;
-        seed = newSeed;
+        double r = (double)rand() / RAND_MAX;
         if(fortune == 0.0 || fortune == INFINITY) {
             struct FortuneIterations fi = {fortune, iterations};
             return fi;
@@ -33,23 +32,24 @@ struct FortuneIterations run(unsigned int seed, double winBelow) {
     }
 }
 
-const int numberOfRuns = 10;
+const int numberOfRuns = 1000;
 
 void runMany(double winBelow) {
+    printf("win below %f\n", winBelow);
+    long brokeCount = 0, richCount = 0;
   for (int i = 0; i < numberOfRuns; i++) {
-    struct FortuneIterations fi = run(i, winBelow);
+    struct FortuneIterations fi = run(winBelow);
     if (fi.fortune == 0.0) {
-        printf("broke after %li iterations\n", fi.iterations);
+        brokeCount++;
     } else if (fi.fortune == INFINITY) {
-        printf("infinitely rich after %li iterations\n", fi.iterations);
-    } else {
-        printf("fortune %f after %li iterations\n", fi.fortune, fi.iterations);
+        richCount++;
     }
   }
+    printf("broke %li rich %li\n", brokeCount, richCount);
 }
 
 int main() {
-    runMany(0.63091); // always go broke
-    runMany(0.63093); // always win big
-    runMany(0.63092); // stuck gambling forever
+    runMany(0.630); // almost always go broke
+    runMany(0.632); // almost always win big
+    runMany(log(2)/log(3)); // stuck gambling for a long time
 }
