@@ -36,7 +36,7 @@ function runMany(winBelow) {
 }
 
 runMany(0.63); // almost always go broke
-runMany(0.632); // always win big
+runMany(0.632); // almost always win big
 // https://en.wikipedia.org/wiki/List_of_mathematical_constants
 // Math.log(2)/Math.log(3) = 0.6309297535714575 Fractal dimension of the Cantor set
 // what have I gotten myself into...
